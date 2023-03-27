@@ -1,0 +1,104 @@
+\documentclass[nobib]{MSword}
+
+% Preamble code:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[english]{babel}
+\usepackage{csquotes}
+\usepackage{lipsum}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\setlength{\parindent}{20pt}
+\graphicspath{ {./images/} }
+\sisetup{
+text-series-to-math = true ,
+propagate-math-font = true
+}
+
+
+\title{PS7}
+\author{Becky Crouse}
+\date{March 28, 2023}
+
+\begin{document}
+\maketitle
+
+\subsection*{Imputation of Missing Values}
+For Problem Set 7, I ran regression models using the wages data set. The model used for each regression is:
+$$logwage_i=\beta_0+\beta_1 hgc_i+\beta_2 college_i+\beta_3 tenure_i + \beta_4 tenure^2_i + \beta_5 age_i + \beta_6 married_i + \epsilon_i$$
+
+Each model differs in the method used for imputing missing observation data for the dependent variable $logwage$. The following sections describe the data set and the regression models. Tables are generated using the modelsummary package in R.
+
+\subsection*{Summary Table}
+
+\begin{table}[hbt!]
+\centering
+\caption{Summary Data}
+\label{table:1}
+\begin{tabular}[t]{lrrrrrrr}
+\toprule
+  & Unique (\#) & Missing (\%) & Mean & SD & Min & Median & Max\\
+\midrule
+logwage & 670 & 25 & \num{1.6} & \num{0.4} & \num{0.0} & \num{1.7} & \num{2.3}\\
+hgc & 16 & 0 & \num{13.1} & \num{2.5} & \num{0.0} & \num{12.0} & \num{18.0}\\
+tenure & 259 & 0 & \num{6.0} & \num{5.5} & \num{0.0} & \num{3.8} & \num{25.9}\\
+age & 13 & 0 & \num{39.2} & \num{3.1} & \num{34.0} & \num{39.0} & \num{46.0}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\item Values of logwage are missing for 25 percent of the sample.
+\item Given the observations in the data set all relate to women in the late 1980s, I would expect any missing wages are missing not at random (MNAR). 
+\end{itemize}
+\subsection*{Regression Summaries}
+The table below shows the coefficients obtained from running the above regression function for each method of imputation of the missing wage data.
+
+\begin{table}[hbt!]
+\centering
+\caption{Regression results}
+\label{table:2}
+\begin{tabular}[t]{lcccc}
+\toprule
+  & Complete Cases & Mean Imputation & Fitted Value Imputation & Multiple Imputation\\
+\midrule
+(Intercept) & \num{0.534}*** & \num{0.708}*** & \num{0.534}*** & \num{0.560}***\\
+ & (\num{0.146}) & (\num{0.116}) & (\num{0.112}) & (\num{0.143})\\
+hgc & \num{0.062}*** & \num{0.050}*** & \num{0.062}*** & \num{0.061}***\\
+ & (\num{0.005}) & (\num{0.004}) & (\num{0.004}) & \vphantom{1} (\num{0.006})\\
+college & \num{0.145}*** & \num{0.168}*** & \num{0.145}*** & \num{0.126}**\\
+ & (\num{0.034}) & (\num{0.026}) & (\num{0.025}) & (\num{0.035})\\
+tenure & \num{0.050}*** & \num{0.038}*** & \num{0.050}*** & \num{0.042}***\\
+ & (\num{0.005}) & (\num{0.004}) & (\num{0.004}) & (\num{0.006})\\
+$tenure^2$ & \num{-0.002}*** & \num{-0.001}*** & \num{-0.002}*** & \num{-0.001}**\\
+ & (\num{0.000}) & (\num{0.000}) & (\num{0.000}) & (\num{0.000})\\
+age & \num{0.000} & \num{0.000} & \num{0.000} & \num{0.001}\\
+ & (\num{0.003}) & (\num{0.002}) & (\num{0.002}) & (\num{0.003})\\
+married & \num{-0.022} & \num{-0.027}* & \num{-0.022}+ & \num{-0.019}\\
+ & (\num{0.018}) & (\num{0.014}) & (\num{0.013}) & (\num{0.019})\\
+\midrule
+Num.Obs. & \num{1669} & \num{2229} & \num{2229} & \num{2229}\\
+Num.Imp. &  &  &  & \num{5}\\
+R2 & \num{0.208} & \num{0.147} & \num{0.277} & \num{0.224}\\
+R2 Adj. & \num{0.206} & \num{0.145} & \num{0.275} & \num{0.222}\\
+AIC & \num{1179.9} & \num{1091.2} & \num{925.5} & \\
+BIC & \num{1223.2} & \num{1136.8} & \num{971.1} & \\
+Log.Lik. & \num{-581.936} & \num{-537.580} & \num{-454.737} & \\
+RMSE & \num{0.34} & \num{0.31} & \num{0.30} & \\
+\bottomrule
+\multicolumn{5}{l}{\rule{0pt}{1em}+ p $<$ 0.1, * p $<$ 0.05, ** p $<$ 0.01, *** p $<$ 0.001}\\
+\end{tabular}
+\end{table}
+
+Given the true value of $\hat{\beta_1}=.093$, the models above all underestimate this coefficient. The imputation techniques resulting in the closes estimates are the Complete Cases and Fitted Value Imputation, which both show a coefficient of $.062$. The Multiple Imputation method is also nearly the same with a coefficient estimate of $.063$. The Mean Imputation technique, however, was furthest from the true value at $.05$. 
+
+It is apparent that none of the imputation techniques helps get us to an answer that mirrors the true value. However, both the Fitted Value and the Multiple Imputation techniques lead us to an answer that is very close to the Complete Cases technique.
+
+It makes sense that the Fitted Value Imputation method provides us with the same coefficient estimate as the Completed Cases method because the imputed $y$ variables all fall on the fitted line. The key difference between these models is that the Fitted Value coefficients have smaller standard errors, which mechanically results from using a larger amount of data.
+
+The Multiple Imputation method runs separate models to calculate values for the missing data points, which are then pooled resulting in output similar to regression coefficients. I used the default arguments, so the number of models used in my imputation was 5 and the method for imputing is predictive mean matching (pmm). At a high-level, the pmm method uses multiple instances of random sampling of the posterior predictive distribution of the complete cases regression to calculate values for the missing $y$ observations, and then pools these into one value. 
+
+\subsection*{Final Project}
+I plan to use the ISORA tax authority survey data (used in PS6), along with other available data on tax rates and country-level information to understand what factors lead to the best enforcement outcomes. I am most interested in using machine learning for prediction and classification to work through this, and would like to better understand if or how unsupervised models could be used (so I am anxious to learn more about these techniques).
+
+\end{document}
