@@ -1,0 +1,73 @@
+\documentclass[nobib]{MSword}
+
+% Preamble code:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[english]{babel}
+\usepackage{csquotes}
+\usepackage{lipsum}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\newcolumntype{d}{S[
+    input-open-uncertainty=,
+    input-close-uncertainty=,
+    parse-numbers = false,
+    table-align-text-pre=false,
+    table-align-text-post=false
+ ]}
+
+\title{PS8}
+\author{Becky Crouse}
+\date{April 4, 2023}
+
+\begin{document}
+\maketitle
+
+\subsection*{Estimating beta}
+The true betas are shown in the table on the next page.
+
+The estimated coefficients generated from the regression are very similar and in some cases exactly identical to the "true" betas. In all cases, this was true, though the lm() function results depicted below are generally the closest to the "truth".
+
+Switching between the L-BFGS and Nelder-Mead algorithms provided roughly the same answers but in order for the Nelder-Mead algorithm to get to the correct answer, I needed to increase the maxeval.
+
+\begin{table} [hbt!]
+\centering
+\begin{tabular}[t]{lc}
+\toprule
+  & (1)\\
+\midrule
+X1 & \num{1.501}\\
+ & \vphantom{9} (\num{0.002})\\
+X2 & \num{-1.000}\\
+ & \vphantom{8} (\num{0.002})\\
+X3 & \num{-0.251}\\
+ & \vphantom{7} (\num{0.002})\\
+X4 & \num{0.750}\\
+ & \vphantom{6} (\num{0.002})\\
+X5 & \num{3.500}\\
+ & \vphantom{5} (\num{0.002})\\
+X6 & \num{-1.999}\\
+ & \vphantom{4} (\num{0.002})\\
+X7 & \num{0.499}\\
+ & \vphantom{3} (\num{0.002})\\
+X8 & \num{0.998}\\
+ & \vphantom{2} (\num{0.002})\\
+X9 & \num{1.250}\\
+ & \vphantom{1} (\num{0.002})\\
+X10 & \num{1.999}\\
+ & (\num{0.002})\\
+\midrule
+Num.Obs. & \num{1e+05}\\
+R2 & \num{0.991}\\
+R2 Adj. & \num{0.991}\\
+AIC & \num{145626.7}\\
+BIC & \num{145731.3}\\
+Log.Lik. & \num{-72802.350}\\
+RMSE & \num{0.50}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+\end{document}
