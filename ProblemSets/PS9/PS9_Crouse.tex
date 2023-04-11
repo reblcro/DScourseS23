@@ -1,0 +1,44 @@
+\documentclass[nobib]{MSword}
+
+% Preamble code:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[english]{babel}
+\usepackage{csquotes}
+\usepackage{lipsum}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\title{PS9}
+\author{Becky Crouse}
+\date{April 11, 2023}
+
+\begin{document}
+\maketitle
+
+\section*{Question 7:}
+The dimensions of "housing\_train" are 404 rows and 14 columns. The number of X variables in this dataset are the same, but once the training data is prepared (or juiced), 61 new X variables are added bringing the total X variables to 75. 
+
+\section*{Question 8: LASSO model}
+
+\begin{itemize}
+    \item Optimal value of $\lambda=.00139$ 
+    \item In-sample $RMSE=.0632$
+    \item Out-of-sample $RMSE=.170$
+\end{itemize}
+
+\section*{Question 9: Ridge model}
+
+\begin{itemize}
+    \item Optimal value of $\lambda=.0373$ 
+    \item In-sample $RMSE=.0699$
+    \item Out-of-sample $RMSE=.173$
+\end{itemize}
+
+\section*{Question 10:}
+\begin{itemize}
+    \item An OLS model cannot be estimated with a model that has more variables (columns) than observations (rows).
+    \item Both models have a similar out-of-sample RMSE, which suggests that they have a similar bias-variance trade-off. The difference between the in-sample and out-of-sample RMSE is somewhat large in terms of the in-sample error size, but not too large in overall magnitude. Thus I would conclude that these models are appropriately balancing the bias-variance trade-off.
+\end{itemize}
+
+\end{document}
