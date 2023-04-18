@@ -1,0 +1,36 @@
+\documentclass[nobib]{MSword}
+
+% Preamble code:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[english]{babel}
+\usepackage{csquotes}
+\usepackage{lipsum}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\title{PS10}
+\author{Becky Crouse}
+\date{April 18, 2023}
+
+\begin{document}
+\maketitle
+
+\section{Optimal Tuning Values}
+
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|}
+    \hline
+        penalty & .estimate & alg & cost\_complexity & tree\_depth & min\_n & hidden\_units & neighbors & cost & rbf\_sigma \\ \hline
+        0.00 & 0.85 & logit & ~ & ~ & ~ & ~ & ~ & ~ & \\ \hline
+        ~ & 0.87 & decision\_tree & 0.00 & 15.00 & 10.00 & ~ & ~ & ~ & \\ \hline
+        1.00 & 0.85 & nnet & ~ & ~ & ~ & 9.00 & ~ & ~ & \\ \hline
+        ~ & 0.84 & knn & ~ & ~ & ~ & ~ & 30.00 & ~ & \\ \hline
+        ~ & 0.85 & svm & ~ & ~ & ~ & ~ & ~ & 1 & .25 \\ \hline
+    \end{tabular}
+\end{table}
+
+As shown in the table, the estimates for all models are very similar, but the decision tree result is the most accurate and more efficient than som eo fhte other models like neural net or support vector machine.
+
+\end{document}
