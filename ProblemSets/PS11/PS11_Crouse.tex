@@ -1,0 +1,235 @@
+\documentclass{MSword}
+
+% Preamble code:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[english]{babel}
+\usepackage{csquotes}
+\usepackage{lipsum}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{blindtext}
+\addbibresource{PS11_Crouse.bib}
+
+\title{PS11}
+\author{Becky Crouse}
+\date{April 24, 2023}
+
+\begin{document}
+\maketitle
+
+\section*{Introduction}
+
+Research in tax and economics often seeks to understand how tax enforcement can impact business and economic outcomes. The goal of this research is understanding optimal taxation and optimal enforcement. However, this analysis is made difficult because tax regimes and political structures differ across jurisdictions and these differences can lead to differences in tax evasion amongst taxpayers. My research investigates these differences using a latent class  model approach. 
+
+\section*{Motivation}
+
+What is the optimal level of tax enforcement? \cite{kaplow} suggests it depends on many factors, including taxation level and the level of tax evasion within the jurisdiction. A major hurdle to assessing the optimal level of tax enforcement is that tax evasion is unobservable. Levels of tax evasion could vary across jurisdictions and across individuals or entities within jurisdictions. Factors such as the legal and political environment within a jurisdiction may contribute to differences in tax evasion. Additionally, tax morale can vary across jurisdictions and contribute to differences in tax evasion. While tax morale may be influenced by the legal or political environment in a jurisdiction, it may also encompass 
+
+\section*{Data}
+
+As my primary data source, I utilize the results from the International Survey on Revenue Administration (ISORA) covering the years 2018-2020. ISORA surveys are considered the most comprehensive source of standardized data on tax administrations (\cite{isora}). In addition to the ISORA survey, I utilize two country-level metrics from the World Governance Indicators and as a measure of tax morale, I utilize responses from the World Values Survey. 
+
+My dataset covers the years 2018, 2019 and 2020. I merge 
+
+\section*{Methodological Approach}
+I begin my analysis by estimating the following baseline model:
+$$RevGDP = \beta_0 + \beta_1 RuleofLaw_{i,t} + \beta_2 ControlofCorruption_{i,t} + \beta_3 JustificationCheat_{i} + \beta_4 CountryClass_{i,t} + \epsilon_1 $$
+
+where $RevGDP$ is total revenue as a percent of GDP, $RuleofLaw$ is the perception of the prevalence of crime and the quality of crimial and civil law from the WGI data set, $ControlofCorrupt$ is the perception of corruption within government from the WGI data set, $JustificationCheat$ is the response to the question from the 2018 World Values Survey asking respondents to indicate if it's justifiable to cheat on taxes, and $CountryClass$ is the World Bank's classificaiton of countries into High Income, High-Middle Income, Low-Middle Income and Low Income groups. 
+
+The purpose of this model is to measure how perceptions of the legal, political and moral environment within jurisdictions can lead to different taxation outcomes. For comparability across jurisdictions, revenue collections over GDP is used as the relevant outcome. For any given outcome, the level of optimal tax enforcement will vary depending on the level of tax evasion. In turn, the level of tax evasion will be dependent on many country-level factors that are proxied in this model by the WGI and WVS perception data.
+
+Because my concern is to understand if an unobserved class is driving the true relationship, I use the E-M algorithm through the Mclust package in R to cluster the residuals. The the optimal number of clusters was determined based on the model that produced the smallest Bayesian Information Criterion (BIC)\footnote{The Mclust package defines BIC as the negative of the standard BIC, so the optimal clusters actually maximize the BIC}. 
+
+The E-M algorithm estimates posterior probabilities which indicate the likelihood a given observation belongs to each class. Each observation is then grouped into the class with the highest probability. The full sample is then split into subgroups by class and models are estimated for each subgroup. Running models at the subgroup level allows for different coefficients across subgroups, aiding in the analysis of the drivers of the revenue collections outcomes.
+
+The subgroup models are estimated as:
+$$RevGDP = \gamma_0 + \gamma_1 Efficiency_{i,t} + \gamma_2 Cap\_Exp_{i,t} + \gamma_3 IT\_Exp_{i,t} + \gamma_4 Staff\_TPServices_{i,t} + \gamma_5 Staff\_Enforcement_{i,t} + \gamma_6 Staff\_Female_{i,t} + Staff\_AdvDeg_{i,t} + RuleofLaw_{i,t} + ControlofCorruption_{i,t} + WVS_Tax_Cheat_{i} + Country\_Classification_{i,t} + CountryFE \epsilon $$
+
+The subgroup models incorporate a variety of controls that may impact the efficiency of tax enforcement efforts.
+
+\section*{Results}
+
+Summary data from the baseline model is shown in Table 1. As anticipated, the coefficient on $Efficiency$ is negative and significant. 
+
+Based on the residuals from the baseline model, the optimal number of clusters for the E-M algorithm is 4. Approximately 22 percent of the sample is in group 1, 36 percent in group 2, 24 percent in group 3 and 18 percent in group 4.
+
+\begin{table}
+\centering
+\caption{Baseline Model}
+\label{table:1}
+\begin{tabular}[t]{lc}
+\toprule
+  & (1)\\
+\midrule
+(Intercept) & \num{0.193}***\\
+ & \vphantom{1} (\num{0.020})\\
+ruleoflaw & \num{-0.006}\\
+ & (\num{0.020})\\
+contofcorrupt & \num{0.023}\\
+ & \vphantom{1} (\num{0.017})\\
+mean\_cheattax\_17\_22 & \num{0.007}\\
+ & (\num{0.008})\\
+as.factor(countryclass)L & \num{-0.039}\\
+ & (\num{0.042})\\
+as.factor(countryclass)LM & \num{-0.074}***\\
+ & (\num{0.022})\\
+as.factor(countryclass)UM & \num{-0.058}**\\
+ & (\num{0.017})\\
+\midrule
+Num.Obs. & \num{270}\\
+R2 & \num{0.331}\\
+R2 Adj. & \num{0.316}\\
+AIC & \num{-677.8}\\
+BIC & \num{-649.0}\\
+Log.Lik. & \num{346.880}\\
+F & \num{21.715}\\
+RMSE & \num{0.07}\\
+\bottomrule
+\multicolumn{2}{l}{\rule{0pt}{1em}+ p $<$ 0.1, * p $<$ 0.05, ** p $<$ 0.01, *** p $<$ 0.001}\\
+\end{tabular}
+\end{table}
+
+
+\begin{table}
+\centering
+\caption{Subgroup Models}
+\label{table:2}
+\begin{tabular}[t]{lcc}
+\toprule
+  & Group 1 & Group 2\\
+\midrule
+(Intercept) & \num{0.043}* & \num{0.385}***\\
+ & (\num{0.021}) & (\num{0.102})\\
+coc & \num{-0.001}+ & \num{-0.041}**\\
+ & (\num{0.001}) & (\num{0.012})\\
+expend\_cap\_dec & \num{-0.058}* & \num{-0.024}\\
+ & (\num{0.025}) & (\num{0.040})\\
+expend\_it\_dec & \num{0.084}* & \num{0.122}**\\
+ & (\num{0.040}) & (\num{0.039})\\
+staff\_tpserv\_dec & \num{0.001} & \num{0.008}\\
+ & (\num{0.039}) & (\num{0.036})\\
+staff\_enforce\_dec & \num{-0.001} & \num{0.000}\\
+ & (\num{0.004}) & (\num{0.008})\\
+staff\_f\_dec & \num{0.100}*** & \num{0.018}\\
+ & (\num{0.028}) & (\num{0.186})\\
+staff\_masters\_dec & \num{0.165}*** & \num{0.274}**\\
+ & (\num{0.036}) & (\num{0.085})\\
+ruleoflaw\_med & \num{-0.049}* & \num{-0.022}+\\
+ & (\num{0.024}) & (\num{0.012})\\
+contofcorrupt\_med & \num{0.063} & \num{-0.013}\\
+ & (\num{0.041}) & (\num{0.009})\\
+mean\_cheattax\_17\_22 & \num{-0.008} & \num{-0.135}**\\
+ & (\num{0.020}) & \vphantom{1} (\num{0.046})\\
+as.factor(countryclass)L & \num{0.010} & \num{-0.060}\\
+ & (\num{0.024}) & (\num{0.142})\\
+as.factor(countryclass)LM & \num{-0.012} & \num{0.100}\\
+ & (\num{0.033}) & (\num{0.060})\\
+as.factor(countryclass)UM & \num{-0.011} & \num{0.160}***\\
+ & (\num{0.034}) & (\num{0.038})\\
+as.factor(Code)AUS & \num{0.078}*** & \\
+ & (\num{0.012}) & \\
+as.factor(Code)AUT & \num{0.104}*** & \num{0.087}**\\
+ & (\num{0.011}) & (\num{0.028})\\
+as.factor(Code)BGD & \num{0.003} & \\
+ & (\num{0.016}) \vphantom{1} & \\
+as.factor(Code)CHL & \num{0.033} & \num{0.102}*\\
+ & (\num{0.020}) & (\num{0.046})\\
+as.factor(Code)COL & \num{0.042}** & \\
+ & (\num{0.015}) \vphantom{1} & \\
+as.factor(Code)CYP & \num{0.015} & \\
+ & (\num{0.016}) & \\
+as.factor(Code)CZE & \num{-0.027}** & \\
+ & (\num{0.009}) \vphantom{1} & \\
+as.factor(Code)DEU & \num{0.049}*** & \\
+ & (\num{0.013}) \vphantom{1} & \\
+as.factor(Code)ECU & \num{-0.029}+ & \\
+ & (\num{0.015}) & \\
+as.factor(Code)GEO & \num{0.011} & \num{-0.070}***\\
+ & (\num{0.033}) & (\num{0.019})\\
+as.factor(Code)GTM & \num{0.014} & \\
+ & (\num{0.020}) & \\
+as.factor(Code)IDN & \num{0.009} & \\
+ & (\num{0.014}) \vphantom{1} & \\
+as.factor(Code)ISL & \num{0.043}** & \\
+ & (\num{0.013}) & \\
+as.factor(Code)KEN & \num{0.052} & \num{0.133}\\
+ & (\num{0.035}) & (\num{0.080})\\
+as.factor(Code)LTU & \num{-0.001} & \\
+ & (\num{0.009}) & \\
+as.factor(Code)MDV & \num{0.009} & \num{-0.203}***\\
+ & (\num{0.024}) & (\num{0.049})\\
+as.factor(Code)MMR & \num{0.015} & \\
+ & (\num{0.017}) & \\
+as.factor(Code)MNG & \num{0.009} & \num{0.087}\\
+ & (\num{0.030}) & (\num{0.059})\\
+as.factor(Code)NGA & \num{-0.029} & \\
+ & (\num{0.024}) & \\
+as.factor(Code)PAK & \num{0.059}*** & \\
+ & (\num{0.014}) & \\
+as.factor(Code)PER & \num{0.049}*** & \num{-0.155}***\\
+ & (\num{0.012}) & (\num{0.021})\\
+as.factor(Code)PHL & \num{0.006} & \\
+ & (\num{0.032}) & \\
+as.factor(Code)POL & \num{-0.062}* & \\
+ & (\num{0.030}) & \\
+as.factor(Code)SVK & \num{-0.059}*** & \num{0.011}\\
+ & (\num{0.013}) & (\num{0.059})\\
+as.factor(Code)ARM &  & \num{-0.116}\\
+ &  & (\num{0.083})\\
+as.factor(Code)AZE &  & \num{0.045}\\
+ &  & (\num{0.082})\\
+as.factor(Code)BGR &  & \num{-0.300}***\\
+ &  & (\num{0.079})\\
+as.factor(Code)BOL &  & \num{-0.057}\\
+ &  & (\num{0.048})\\
+as.factor(Code)BRA &  & \num{0.046}\\
+ &  & (\num{0.051})\\
+as.factor(Code)EST &  & \num{0.208}***\\
+ &  & (\num{0.016})\\
+as.factor(Code)FIN &  & \num{0.080}*\\
+ &  & \vphantom{2} (\num{0.031})\\
+as.factor(Code)HRV &  & \num{0.062}+\\
+ &  & \vphantom{1} (\num{0.035})\\
+as.factor(Code)ITA &  & \num{0.040}\\
+ &  & (\num{0.057})\\
+as.factor(Code)LVA &  & \num{0.206}***\\
+ &  & (\num{0.019})\\
+as.factor(Code)MAR &  & \num{-0.108}*\\
+ &  & (\num{0.042})\\
+as.factor(Code)MEX &  & \num{-0.012}\\
+ &  & (\num{0.032})\\
+as.factor(Code)MNE &  & \num{0.075}\\
+ &  & \vphantom{1} (\num{0.049})\\
+as.factor(Code)NIC &  & \num{-0.077}*\\
+ &  & \vphantom{1} (\num{0.031})\\
+as.factor(Code)NLD &  & \num{0.195}***\\
+ &  & (\num{0.047})\\
+as.factor(Code)NOR &  & \num{0.100}**\\
+ &  & (\num{0.031})\\
+as.factor(Code)PRT &  & \num{0.177}***\\
+ &  & (\num{0.015})\\
+as.factor(Code)SGP &  & \num{-0.068}+\\
+ &  & (\num{0.035})\\
+as.factor(Code)SVN &  & \num{0.081}\\
+ &  & (\num{0.049})\\
+\midrule
+Num.Obs. & \num{130} & \num{140}\\
+R2 & \num{0.988} & \num{0.988}\\
+R2 Adj. & \num{0.983} & \num{0.984}\\
+AIC & \num{-921.2} & \num{-836.9}\\
+BIC & \num{-809.4} & \num{-713.3}\\
+Log.Lik. & \num{499.624} & \num{460.442}\\
+RMSE & \num{0.01} & \num{0.01}\\
+\bottomrule
+\multicolumn{3}{l}{\rule{0pt}{1em}+ p $<$ 0.1, * p $<$ 0.05, ** p $<$ 0.01, *** p $<$ 0.001}\\
+\end{tabular}
+\end{table}
+
+
+\section*{Conclusion}
+This analysis attempts to understand the varying relationships between revenue collections and tax enforcement across countries. This approach utilizes the expectation-maximization (E-M) algorithm to detect underlying differences in enforcement outcomes based on a country's tax morale and perceptions of the legal and political environment.
+
+\printbibliography[title={References}]
+\end{document}
